@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navAccount"
+        android:icon="@drawable/ic_account_circle_black_24dp"
+        android:title="Account" />
+    <item
+        android:id="@+id/navSetting"
+        android:icon="@mipmap/ic_settings_black_24dp"
+        android:title="Setting" />
+    <item
+        android:id="@+id/navLogOut"
+        android:icon="@mipmap/ic_reply_black_24dp"
+        android:title="Log Out" />
+    <item
+        android:id="@+id/navHelp"
+        android:icon="@mipmap/ic_help_black_24dp"
+        android:title="Help" />
+</menu>

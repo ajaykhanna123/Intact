@@ -8,11 +8,14 @@ import android.support.design.internal.BottomNavigationItemView;
 import android.support.design.internal.BottomNavigationMenu;
 import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.RelativeLayout;
 import android.widget.Toolbar;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,6 +35,9 @@ public class MainActivity extends AppCompatActivity  {
     public TeacherFragment teacherFragment;
     public NotificationFragment notificationFragment;
 
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle mToogle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +46,13 @@ public class MainActivity extends AppCompatActivity  {
         mToolbar=(android.support.v7.widget.Toolbar)findViewById(R.id.menu_app_bar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Intact");
+
+        //drawer menu layout
+        drawerLayout=(DrawerLayout)findViewById(R.id.drawerlayout);
+        mToogle=new ActionBarDrawerToggle(this,drawerLayout,R.string.open,R.string.close);
+        drawerLayout.addDrawerListener(mToogle);
+        mToogle.syncState();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         mAuth=FirebaseAuth.getInstance();
@@ -96,23 +109,22 @@ public class MainActivity extends AppCompatActivity  {
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.main_menu,menu);
-        return true;
-    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-         super.onOptionsItemSelected(item);
-        if(item.getItemId()==R.id.menu_logOut)
-        {
-            FirebaseAuth.getInstance().signOut();
-            sendToLogin();
+
+
+            //FirebaseAuth.getInstance().signOut();
+           // sendToLogin();
+
+        if(mToogle.onOptionsItemSelected(item)){
+            return true;
         }
 
-        return true;
+
+
+        return super.onOptionsItemSelected(item);
 
     }
     public void sendToLogin()
