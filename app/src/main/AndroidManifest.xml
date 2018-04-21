@@ -22,12 +22,6 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        <activity android:name=".GeneralNoticeActivity" />
-        <activity android:name=".DiscussionActivity" />
-        <activity android:name=".StudyMaterialActivity" />
-        <activity android:name=".TeacherInfoActivity" />
-        <activity android:name=".NoticePostActivity"
-            android:parentActivityName=".GeneralNoticeActivity"></activity>
     </application>
 
 </manifest>

@@ -5,17 +5,21 @@
     <item
         android:id="@+id/navGeneralNotice"
         android:icon="@drawable/ic_chrome_reader_mode_black_24dp"
-        android:title="@string/general_notice" />
+        android:title="Notice" />
     <item
         android:id="@+id/navDiscussionForum"
         android:icon="@drawable/ic_question_answer_black_24dp"
-        android:title="@string/discusssion_forum" />
+        android:title="Forum" />
     <item
         android:id="@+id/navStudyMaterial"
         android:icon="@drawable/ic_chrome_reader_mode_black_24dp"
-        android:title="@string/studymaterial" />
+        android:title="Material" />
     <item
         android:id="@+id/navTeacherInfo"
         android:icon="@drawable/ic_person_pin_black_24dp"
-        android:title="@string/teacher_info" />
+        android:title="Teacher" />
+    <item
+        android:id="@+id/navNotifications"
+        android:icon="@mipmap/ic_notifications_black_24dp"
+        android:title="Notifiy" />
 </menu>

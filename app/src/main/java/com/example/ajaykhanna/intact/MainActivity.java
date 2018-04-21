@@ -1,5 +1,6 @@
 package com.example.ajaykhanna.intact;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -19,10 +20,17 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.lang.reflect.Field;
 
-public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity  {
 
     private FirebaseAuth mAuth;
     private android.support.v7.widget.Toolbar mToolbar;
+
+    //fragments
+    public NoticeFragment noticeFragment;
+    public StudyFragment studyFragment;
+    public DiscussionFragment discussionFragment;
+    public TeacherFragment teacherFragment;
+    public NotificationFragment notificationFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,10 +47,46 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         //Bottom navigation view
         BottomNavigationView bottomNavigationView =(BottomNavigationView)findViewById(R.id.bottomNavBar);
         BottomNavigationViewHelper.disableShiftMode(bottomNavigationView);
-        bottomNavigationView.setOnNavigationItemSelectedListener(this);
+
         Menu menu=bottomNavigationView.getMenu();
         MenuItem menuItem=menu.getItem(0);
         menuItem.setChecked(true);
+
+
+        //initialise all fragments
+        noticeFragment=new NoticeFragment();
+        teacherFragment=new TeacherFragment();
+        discussionFragment=new DiscussionFragment();
+        studyFragment=new StudyFragment();
+        notificationFragment=new NotificationFragment();
+
+        replaceFragment(noticeFragment);//app starts from dis fragment
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.navGeneralNotice:
+                        replaceFragment(noticeFragment);
+                        return true;
+                    case R.id.navDiscussionForum:
+                        replaceFragment(discussionFragment);
+                        return true;
+                    case R.id.navStudyMaterial:
+                        replaceFragment(studyFragment);
+                        return true;
+                    case R.id.navTeacherInfo:
+                        replaceFragment(teacherFragment);
+                        return true;
+                    case R.id.navNotifications:
+                        replaceFragment(notificationFragment);
+                        return true;
+
+
+                }
+                return false;
+            }
+        });
 
     }
     @Override
@@ -78,44 +122,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         loginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         finish();
     }
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item)
+    private void replaceFragment(android.support.v4.app.Fragment fragment)
     {
-        int itemId=item.getItemId();
-        switch (itemId)
-        {
-            case R.id.navGeneralNotice:
-                Intent noticeIntent=new Intent(MainActivity.this,GeneralNoticeActivity.class);
-                startActivity(noticeIntent);
-                noticeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                finish();
-                break;
-            case R.id.navStudyMaterial:
-                Intent studyMaterial=new Intent(MainActivity.this,StudyMaterialActivity.class);
-                startActivity(studyMaterial);
-                studyMaterial.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                finish();
-                break;
-            case R.id.navTeacherInfo:
-                Intent teacherInfo=new Intent(MainActivity.this,TeacherInfoActivity.class);
-                startActivity(teacherInfo);
-                teacherInfo.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                finish();
-                break;
-            case R.id.navDiscussionForum:
-                Intent discussionIntent=new Intent(MainActivity.this,DiscussionActivity.class);
-                startActivity(discussionIntent);
-                discussionIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                finish();
-                break;
-
-        }
-
-
-        return false;
-
+        android.support.v4.app.FragmentTransaction fragmentTransaction=getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.mainContainer,fragment);
+        fragmentTransaction.commit();
     }
+
+
 
 
 }

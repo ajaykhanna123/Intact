@@ -4,4 +4,7 @@
     <string name="teacher_info">Teacher Info</string>
     <string name="studymaterial">Study Material</string>
     <string name="discusssion_forum">Discussion</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
