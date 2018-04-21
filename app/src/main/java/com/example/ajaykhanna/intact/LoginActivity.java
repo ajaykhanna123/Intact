@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String userName=edtLoginUserName.getEditText().getText().toString();
+                String userName=edtLoginUserName.getEditText().getText().toString().trim();
                 String password=edtLoginPassword.getEditText().getText().toString();
                 if(!TextUtils.isEmpty(userName) || !TextUtils.isEmpty(password))
                 {
