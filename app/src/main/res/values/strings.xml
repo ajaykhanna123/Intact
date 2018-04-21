@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Intact</string>
+    <string name="general_notice">Notice</string>
+    <string name="teacher_info">Teacher Info</string>
+    <string name="studymaterial">Study Material</string>
+    <string name="discusssion_forum">Discussion</string>
+</resources>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.ajaykhanna.intact.NoticePostActivity"
+    android:background="@color/bottom_bar">
+    <include layout="@layout/app_bar" android:id="@+id/addNoticeToolbar"></include>
+
+    <EditText
+        android:id="@+id/edtPostDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/edtPostTitle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/post_shape"
+        android:ems="10"
+        android:hint="Description"
+        android:inputType="textMultiLine" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/addNoticeToolbar"
+        android:layout_marginTop="14dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/add_image" />
+
+    <EditText
+        android:id="@+id/edtPostTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/edtPostDescription"
+        android:layout_below="@+id/imageView3"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/post_shape"
+        android:ems="10"
+        android:hint="Notice Title"
+        android:inputType="textPersonName"
+        android:singleLine="true" />
+
+    <Button
+        android:id="@+id/btnSubmitPost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/edtPostTitle"
+        android:layout_below="@+id/edtPostDescription"
+        android:layout_marginStart="85dp"
+        android:layout_marginTop="42dp"
+        android:background="@color/login_Btn"
+        android:text="Submit Post"
+        android:textColor="@android:color/background_light" />
+
+</RelativeLayout>

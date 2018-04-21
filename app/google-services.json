@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "284791978895",
+    "firebase_url": "https://intact-66bd9.firebaseio.com",
+    "project_id": "intact-66bd9",
+    "storage_bucket": "intact-66bd9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:284791978895:android:699524fc2ec304e4",
+        "android_client_info": {
+          "package_name": "com.example.ajaykhanna.intact"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "284791978895-nibjk8scq80t5tcv06st8q7u00mu2ovj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ajaykhanna.intact",
+            "certificate_hash": "5dbdd5ff44eb73cc50c5644ce07c419ef65b9737"
+          }
+        },
+        {
+          "client_id": "284791978895-bmhklujsg6tu44jja6t57bfna0guhvdp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDuuidFTd96BH3r0TZXKMayIM9IbUioqvk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "284791978895-bmhklujsg6tu44jja6t57bfna0guhvdp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
