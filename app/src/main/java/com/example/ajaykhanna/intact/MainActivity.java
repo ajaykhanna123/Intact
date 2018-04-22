@@ -8,6 +8,8 @@ import android.support.design.internal.BottomNavigationItemView;
 import android.support.design.internal.BottomNavigationMenu;
 import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +18,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,6 +40,7 @@ public class MainActivity extends AppCompatActivity  {
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle mToogle;
+    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,31 +79,58 @@ public class MainActivity extends AppCompatActivity  {
 
         replaceFragment(noticeFragment);//app starts from dis fragment
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+        navigationView=(NavigationView)findViewById(R.id.navigationView);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.navGeneralNotice:
-                        replaceFragment(noticeFragment);
-                        return true;
-                    case R.id.navDiscussionForum:
-                        replaceFragment(discussionFragment);
-                        return true;
-                    case R.id.navStudyMaterial:
-                        replaceFragment(studyFragment);
-                        return true;
-                    case R.id.navTeacherInfo:
-                        replaceFragment(teacherFragment);
-                        return true;
-                    case R.id.navNotifications:
-                        replaceFragment(notificationFragment);
-                        return true;
+                item.setChecked(true);
 
+                drawerLayout.closeDrawers();
+
+                int id=item.getItemId();
+                switch (id)
+                {
+                    case R.id.navAccount:
+                        Toast.makeText(MainActivity.this,"account ",Toast.LENGTH_LONG).show();
+                        return true;
+                    case R.id.navLogOut:
+                        FirebaseAuth.getInstance().signOut();
+                        sendToLogin();
+                        return true;
 
                 }
-                return false;
+
+
+                return true;
             }
         });
+
+
+                bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.navGeneralNotice:
+                                replaceFragment(noticeFragment);
+                                return true;
+                            case R.id.navDiscussionForum:
+                                replaceFragment(discussionFragment);
+                                return true;
+                            case R.id.navStudyMaterial:
+                                replaceFragment(studyFragment);
+                                return true;
+                            case R.id.navTeacherInfo:
+                                replaceFragment(teacherFragment);
+                                return true;
+                            case R.id.navNotifications:
+                                replaceFragment(notificationFragment);
+                                return true;
+
+
+                        }
+                        return false;
+                    }
+                });
 
     }
     @Override
@@ -110,23 +141,6 @@ public class MainActivity extends AppCompatActivity  {
     }
 
 
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-
-            //FirebaseAuth.getInstance().signOut();
-           // sendToLogin();
-
-        if(mToogle.onOptionsItemSelected(item)){
-            return true;
-        }
-
-
-
-        return super.onOptionsItemSelected(item);
-
-    }
     public void sendToLogin()
     {
         Intent loginIntent=new Intent(MainActivity.this,LoginActivity.class);
@@ -141,6 +155,27 @@ public class MainActivity extends AppCompatActivity  {
         fragmentTransaction.commit();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if(mToogle.onOptionsItemSelected(item)){
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+
+    }
+
+
+    @Override
+    public void onBackPressed() {
+
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
 
 
 

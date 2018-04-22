@@ -9,6 +9,13 @@
     tools:context="com.example.ajaykhanna.intact.MainActivity">
 
 
+    <android.support.design.widget.NavigationView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:menu="@menu/account_menu"
+        android:id="@+id/navigationView"
+        app:headerLayout="@layout/navigation_header"></android.support.design.widget.NavigationView>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -19,6 +26,7 @@
             layout="@layout/app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"></include>
+
 
         <FrameLayout
             android:id="@+id/mainContainer"
@@ -46,14 +54,6 @@
 
 
     </RelativeLayout>
-    <android.support.design.widget.NavigationView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        app:menu="@menu/account_menu"></android.support.design.widget.NavigationView>
-
-
-
 
 
 </android.support.v4.widget.DrawerLayout>
