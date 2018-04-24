@@ -26,7 +26,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.lang.reflect.Field;
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private FirebaseAuth mAuth;
     private android.support.v7.widget.Toolbar mToolbar;
@@ -47,39 +47,40 @@ public class MainActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mToolbar=(android.support.v7.widget.Toolbar)findViewById(R.id.menu_app_bar);
+        mToolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.menu_app_bar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Intact");
 
         //drawer menu layout
-        drawerLayout=(DrawerLayout)findViewById(R.id.drawerlayout);
-        mToogle=new ActionBarDrawerToggle(this,drawerLayout,R.string.open,R.string.close);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout);
+        mToogle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(mToogle);
         mToogle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
 
 
-        mAuth=FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         //Bottom navigation view
-        BottomNavigationView bottomNavigationView =(BottomNavigationView)findViewById(R.id.bottomNavBar);
+        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavBar);
         BottomNavigationViewHelper.disableShiftMode(bottomNavigationView);
 
-        Menu menu=bottomNavigationView.getMenu();
-        MenuItem menuItem=menu.getItem(0);
+        Menu menu = bottomNavigationView.getMenu();
+        MenuItem menuItem = menu.getItem(0);
         menuItem.setChecked(true);
 
 
         //initialise all fragments
-        noticeFragment=new NoticeFragment();
-        teacherFragment=new TeacherFragment();
-        discussionFragment=new DiscussionFragment();
-        studyFragment=new StudyFragment();
-        notificationFragment=new NotificationFragment();
+        noticeFragment = new NoticeFragment();
+        teacherFragment = new TeacherFragment();
+        discussionFragment = new DiscussionFragment();
+        studyFragment = new StudyFragment();
+        notificationFragment = new NotificationFragment();
 
         replaceFragment(noticeFragment);//app starts from dis fragment
 
-        navigationView=(NavigationView)findViewById(R.id.navigationView);
+        navigationView = (NavigationView) findViewById(R.id.navigationView);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -87,11 +88,10 @@ public class MainActivity extends AppCompatActivity  {
 
                 drawerLayout.closeDrawers();
 
-                int id=item.getItemId();
-                switch (id)
-                {
+                int id = item.getItemId();
+                switch (id) {
                     case R.id.navAccount:
-                        Toast.makeText(MainActivity.this,"account ",Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, "account ", Toast.LENGTH_LONG).show();
                         return true;
                     case R.id.navLogOut:
                         FirebaseAuth.getInstance().signOut();
@@ -105,40 +105,11 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
 
-
-                bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.navGeneralNotice:
-                                replaceFragment(noticeFragment);
-                                return true;
-                            case R.id.navDiscussionForum:
-                                replaceFragment(discussionFragment);
-                                return true;
-                            case R.id.navStudyMaterial:
-                                replaceFragment(studyFragment);
-                                return true;
-                            case R.id.navTeacherInfo:
-                                replaceFragment(teacherFragment);
-                                return true;
-                            case R.id.navNotifications:
-                                replaceFragment(notificationFragment);
-                                return true;
-
-
-                        }
-                        return false;
-                    }
-                });
-
+        navigationView.setNavigationItemSelectedListener(this);
     }
-    @Override
-    protected void onStart() {
-        super.onStart();
 
 
-    }
+
 
 
     public void sendToLogin()
@@ -166,6 +137,10 @@ public class MainActivity extends AppCompatActivity  {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
+    }
 
     @Override
     public void onBackPressed() {
@@ -178,5 +153,29 @@ public class MainActivity extends AppCompatActivity  {
     }
 
 
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+
+    int id=item.getItemId();
+    switch (id)
+    {
+        case R.id.navAccount:
+            Toast.makeText(MainActivity.this,"account menu",Toast.LENGTH_LONG).show();
+            return true;
+        case R.id.navLogOut:
+            FirebaseAuth.getInstance().signOut();
+            sendToLogin();
+            return true;
+    }
+        return false;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+
+    }
 
 }
