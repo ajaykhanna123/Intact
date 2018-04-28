@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FirebaseAuth mAuth;
     private android.support.v7.widget.Toolbar mToolbar;
 
+
     //fragments
     public NoticeFragment noticeFragment;
     public StudyFragment studyFragment;
@@ -47,6 +48,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
+        //Toolbar name ="intact"
         mToolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.menu_app_bar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Intact");
@@ -161,7 +165,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     switch (id)
     {
         case R.id.navAccount:
-            Toast.makeText(MainActivity.this,"account menu",Toast.LENGTH_LONG).show();
+            Intent accIntent=new Intent(MainActivity.this,AccountActivity.class);
+            startActivity(accIntent);
+
             return true;
         case R.id.navLogOut:
             FirebaseAuth.getInstance().signOut();

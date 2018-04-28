@@ -9,4 +9,14 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="course_name">
+        <item>B.Tech</item>
+        <item>M.Tech</item>
+    </string-array>
+    <string-array name="department_name">
+        <item>B.Tech(Mechanical)</item>
+        <item>B.tech(Computer Science)</item>
+        <item>B.tech(Electrical)</item>
+        <item>B.tech(Civil)</item>
+    </string-array>
 </resources>
