@@ -19,4 +19,5 @@
         <item>B.tech(Electrical)</item>
         <item>B.tech(Civil)</item>
     </string-array>
+    <string name="title_activity_add_notice">AddNoticeActivity</string>
 </resources>

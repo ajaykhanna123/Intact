@@ -85,29 +85,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         replaceFragment(noticeFragment);//app starts from dis fragment
 
         navigationView = (NavigationView) findViewById(R.id.navigationView);
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                item.setChecked(true);
-
-                drawerLayout.closeDrawers();
-
-                int id = item.getItemId();
-                switch (id) {
-                    case R.id.navAccount:
-                        Toast.makeText(MainActivity.this, "account ", Toast.LENGTH_LONG).show();
+                int id=item.getItemId();
+                switch(id)
+                {
+                    case R.id.navGeneralNotice:
+                        replaceFragment(noticeFragment);
                         return true;
-                    case R.id.navLogOut:
-                        FirebaseAuth.getInstance().signOut();
-                        sendToLogin();
+                    case R.id.navDiscussionForum:
+                        replaceFragment(discussionFragment);
                         return true;
-
+                    case R.id.navStudyMaterial:
+                        replaceFragment(studyFragment);
+                        return true;
+                    case R.id.navTeacherInfo:
+                        replaceFragment(teacherFragment);
+                        return true;
+                    case R.id.navNotifications:
+                        replaceFragment(notificationFragment);
+                        return true;
                 }
-
-
-                return true;
+                return false;
             }
         });
+
 
         navigationView.setNavigationItemSelectedListener(this);
     }
@@ -177,11 +181,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return false;
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
 
-
-    }
 
 }

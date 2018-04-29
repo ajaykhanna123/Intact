@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.ajaykhanna.intact.AddNoticeActivity"
+    >
+    <include
+        layout="@layout/app_bar"
+        android:id="@+id/addNoticeToolbar"
+
+        ></include>
+
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:fontFamily="sans-serif-light"
+            android:hint="Give this notice a title"
+            android:textSize="30sp"
+            android:layout_marginTop="50dp"
+            android:height="80dp"
+            android:textStyle="bold"
+            />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+
+        >
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="120dp"
+            android:autoSizeTextType="uniform"
+            android:maxLines="4"
+            android:height="180px"
+
+            android:layout_gravity="top"
+
+
+            android:hint="Notice Description goes here.."
+
+            android:background="@android:color/transparent"
+            android:textSize="24sp"
+
+            android:inputType="textMultiLine" />
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/addImageLinearLayout"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="300dp">
+
+    </LinearLayout>
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/bottomNavAddNotice"
+        android:layout_width="match_parent"
+
+
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        app:menu="@menu/nav_add_notice">
+
+    </android.support.design.widget.BottomNavigationView>
+
+</RelativeLayout>
