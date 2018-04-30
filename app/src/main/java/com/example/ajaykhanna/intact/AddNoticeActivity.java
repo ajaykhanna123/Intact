@@ -44,6 +44,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -73,10 +74,12 @@ public class AddNoticeActivity extends AppCompatActivity {
     private String current_user_id;
     private Bitmap compressedImageFile;
     TextView pdfView;
+    Uri pdf;
 
     //declare all fields
     EditText edtNoticeTitle;
     EditText edtNoticeDesc;
+    String downloadPdf;
 
 
     private ProgressBar newPostProgressBar;
@@ -173,11 +176,43 @@ public class AddNoticeActivity extends AppCompatActivity {
             final String randomName = UUID.randomUUID().toString();
             StorageReference filePath = storageReference.child("post_images").child(randomName + ".jpg");
 
-            if(imageMainUri!=null) {
+            StorageReference pdfPath=storageReference.child("post_pdf").child(randomName+".pdf");
+
+
+            if(imageMainUri!=null && pdf!=null) {
+
+                pdfPath.putFile(pdf).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                         downloadPdf=task.getResult().getDownloadUrl().toString();
+
+                        if(task.isSuccessful())
+                        {
+                            Toast.makeText(AddNoticeActivity.this,"pdf file upload",Toast.LENGTH_LONG)
+                                    .show();
+
+                        }
+                    }
+                })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                String message = e.getMessage().toString();
+                                Toast.makeText(AddNoticeActivity.this, message, Toast.LENGTH_LONG).show();
+
+                            }
+                        });
+
+
+
+
+
+
                 filePath.putFile(imageMainUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task) {
                         final String downloadUri = task.getResult().getDownloadUrl().toString();
+
                         if (task.isSuccessful()) {
                             File newImageFile = new File(imageMainUri.getPath());
                             try {
@@ -192,11 +227,8 @@ public class AddNoticeActivity extends AppCompatActivity {
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
                             compressedImageFile.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                             byte[] thumbData = baos.toByteArray();
-
                             UploadTask uploadTask = storageReference.child("post_images/thumbs").child(randomName + ".jpg")
                                     .putBytes(thumbData);
-
-
 
 
                             uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -213,6 +245,9 @@ public class AddNoticeActivity extends AppCompatActivity {
                                     postMap.put("title", noticeTitle);
                                     postMap.put("user_id", current_user_id);
                                     postMap.put("timeStamp", FieldValue.serverTimestamp());
+                                    postMap.put("pdf file",downloadPdf);
+
+
 
 
 
@@ -364,18 +399,18 @@ public class AddNoticeActivity extends AppCompatActivity {
 
         if (requestCode == PICK_PDF_CODE && resultCode == RESULT_OK && data != null && data.getData() != null) {
             //if a file is selected
-            final Uri[] pdf = {null};
+
             if (data.getData() != null) {
                 //uploading the file
 
 
                 addimageLayout.removeView(pdfView);
-                pdf[0] =data.getData();
-                pdfView.setText(pdf[0].toString());
+                pdf =data.getData();
+                pdfView.setText(pdf.toString());
                 pdfView.setText("file.pdf");
                 addimageLayout.addView(pdfView);
 
-                final Uri finalPdf1 = pdf[0];
+                final Uri finalPdf1 = pdf;
                 pdfView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -401,7 +436,7 @@ public class AddNoticeActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         addimageLayout.removeView(pdfView);
-                                        pdf[0] =null;
+                                        pdf =null;
                                     }
                                 })
                                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
