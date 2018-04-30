@@ -4,5 +4,6 @@
 
     <item android:icon="@mipmap/ic_done_black_24dp"
         app:showAsAction="always"
-        android:title="" />
+        android:title=""
+        android:id="@+id/saveNotice"/>
 </menu>

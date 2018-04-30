@@ -60,12 +60,12 @@ import id.zelory.compressor.Compressor;
 public class AddNoticeActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private BottomNavigationView bottomNavigationView;
-    private Uri imageMainUri=null;
+    private Uri imageMainUri;
     public ImageView imgPost;
     private LinearLayout addimageLayout;
     AlertDialog.Builder builder;
     final static int PICK_PDF_CODE = 2342;
-    
+
     //the firebase objects for storage and database
     private StorageReference storageReference;
     private FirebaseFirestore firebaseFirestore;
@@ -77,6 +77,7 @@ public class AddNoticeActivity extends AppCompatActivity {
     //declare all fields
     EditText edtNoticeTitle;
     EditText edtNoticeDesc;
+
 
     private ProgressBar newPostProgressBar;
 
@@ -90,6 +91,8 @@ public class AddNoticeActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Add Notice");
+
+
 
         //initialse all fields
 
@@ -119,7 +122,6 @@ public class AddNoticeActivity extends AppCompatActivity {
                 switch (id) {
                     case R.id.navCamera:
                         goToCmera();
-
                         return true;
                     case R.id.navFile:
                         getPDF();
@@ -153,7 +155,7 @@ public class AddNoticeActivity extends AppCompatActivity {
 
         switch (id)
         {
-            case R.menu.save_add_notice:
+            case R.id.saveNotice:
                 saveAllDataToFirestore();
                 return true;
         }
@@ -170,78 +172,123 @@ public class AddNoticeActivity extends AppCompatActivity {
 
             final String randomName = UUID.randomUUID().toString();
             StorageReference filePath = storageReference.child("post_images").child(randomName + ".jpg");
-            filePath.putFile(imageMainUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+
+            if(imageMainUri!=null) {
+                filePath.putFile(imageMainUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task) {
+                        final String downloadUri = task.getResult().getDownloadUrl().toString();
+                        if (task.isSuccessful()) {
+                            File newImageFile = new File(imageMainUri.getPath());
+                            try {
+                                compressedImageFile = new Compressor(AddNoticeActivity.this)
+                                        .setMaxHeight(100)
+                                        .setMaxWidth(100)
+                                        .setQuality(2)
+                                        .compressToBitmap(newImageFile);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            compressedImageFile.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                            byte[] thumbData = baos.toByteArray();
+
+                            UploadTask uploadTask = storageReference.child("post_images/thumbs").child(randomName + ".jpg")
+                                    .putBytes(thumbData);
 
 
-                @Override
-                public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task) {
-                    final String downloadUri = task.getResult().getDownloadUrl().toString();
-                    if (task.isSuccessful()) {
-                        File newImageFile = new File(imageMainUri.getPath());
-                        try {
-                            compressedImageFile = new Compressor(AddNoticeActivity.this)
-                                    .setMaxHeight(100)
-                                    .setMaxWidth(100)
-                                    .setQuality(2)
-                                    .compressToBitmap(newImageFile);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        compressedImageFile.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                        byte[] thumbData = baos.toByteArray();
-                        UploadTask uploadTask = storageReference.child("post_images/thumbs").child(randomName + ".jpg")
-                                .putBytes(thumbData);
-                        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                                String downloadThumbUri = taskSnapshot.getDownloadUrl().toString();
 
 
-                                Map<String, Object> postMap = new HashMap<>();
-                                postMap.put("image_thumb", downloadThumbUri);
-                                postMap.put("image_url", downloadUri);
-                                postMap.put("desc", noticeDesc);
-                                postMap.put("title",noticeTitle);
-                                postMap.put("user_id", current_user_id);
-                                postMap.put("timeStamp", FieldValue.serverTimestamp());
+                            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                                firebaseFirestore.collection("Posts").add(postMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<DocumentReference> task) {
-                                        if (task.isSuccessful()) {
-                                            Toast.makeText(AddNoticeActivity.this, "This post was added", Toast.LENGTH_LONG)
-                                                    .show();
-                                            Intent mainIntent = new Intent(AddNoticeActivity.this, MainActivity.class);
-                                            startActivity(mainIntent);
-                                            finish();
+                                    String downloadThumbUri = taskSnapshot.getDownloadUrl().toString();
 
-                                        } else {
+
+                                    Map<String, Object> postMap = new HashMap<>();
+                                    postMap.put("image_thumb", downloadThumbUri);
+                                    postMap.put("image_url", downloadUri);
+                                    postMap.put("desc", noticeDesc);
+                                    postMap.put("title", noticeTitle);
+                                    postMap.put("user_id", current_user_id);
+                                    postMap.put("timeStamp", FieldValue.serverTimestamp());
+
+
+
+                                    firebaseFirestore.collection("Posts").add(postMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentReference> task) {
+                                            if (task.isSuccessful()) {
+                                                Toast.makeText(AddNoticeActivity.this, "This post was added", Toast.LENGTH_LONG)
+                                                        .show();
+                                                Intent mainIntent = new Intent(AddNoticeActivity.this, MainActivity.class);
+                                                startActivity(mainIntent);
+                                                finish();
+
+                                            } else {
+                                                Toast.makeText(AddNoticeActivity.this, "this post was not added"
+                                                        , Toast.LENGTH_LONG).show();
+
+                                            }
 
                                         }
-                                        newPostProgressBar.setVisibility(View.INVISIBLE);
-                                        addimageLayout.removeView(newPostProgressBar);
+                                    });
 
-                                    }
-                                });
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
 
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
+                                    String message = e.getMessage().toString();
+                                    Toast.makeText(AddNoticeActivity.this, message, Toast.LENGTH_LONG).show();
 
-                            }
-                        });
+                                }
+                            });
 
 
-                    } else {
-                        addimageLayout.removeView(newPostProgressBar);
+                        } else {
+                            addimageLayout.removeView(newPostProgressBar);
+                        }
                     }
-                }
-            });
+                });
+            }else
+            {
+
+                Map<String, Object> postMap = new HashMap<>();
+                postMap.put("image_thumb", null);
+                postMap.put("image_url", null);
+                postMap.put("desc", noticeDesc);
+                postMap.put("title", noticeTitle);
+                postMap.put("user_id", current_user_id);
+                postMap.put("timeStamp", FieldValue.serverTimestamp());
+
+                firebaseFirestore.collection("Posts").add(postMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentReference> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(AddNoticeActivity.this, "This post was added", Toast.LENGTH_LONG)
+                                    .show();
+                            Intent mainIntent = new Intent(AddNoticeActivity.this, MainActivity.class);
+                            startActivity(mainIntent);
+                            finish();
+
+                        } else {
+                            Toast.makeText(AddNoticeActivity.this, "this post was not added"
+                                    , Toast.LENGTH_LONG).show();
+
+                        }
+
+                    }
+                });
+
+
+    }
+
+
+
         } else {
-            newPostProgressBar.setVisibility(View.INVISIBLE);
+            Toast.makeText(AddNoticeActivity.this,"Title of the post is must",Toast.LENGTH_LONG).show();
         }
 
     }
