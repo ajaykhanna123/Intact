@@ -99,10 +99,11 @@ public class AddNoticeActivity extends AppCompatActivity {
 
 
         //initialse all fields
+        newPostProgressBar=findViewById(R.id.addNoticeProgress);
 
         edtNoticeTitle = findViewById(R.id.edtNoticeTitle);
         edtNoticeDesc = findViewById(R.id.edtNoticeDesc);
-        newPostProgressBar = new ProgressBar(AddNoticeActivity.this);
+
 
         addimageLayout = findViewById(R.id.addImageLinearLayout);
         imgPost = new ImageView(AddNoticeActivity.this);
@@ -171,7 +172,7 @@ public class AddNoticeActivity extends AppCompatActivity {
         final String noticeDesc = edtNoticeDesc.getText().toString();
 
         if (!TextUtils.isEmpty(noticeTitle)) {
-
+            newPostProgressBar.setVisibility(View.VISIBLE);
 
             final String randomName = UUID.randomUUID().toString();
             StorageReference filePath = storageReference.child("post_images").child(randomName + ".jpg");
@@ -240,7 +241,7 @@ public class AddNoticeActivity extends AppCompatActivity {
                                     postMap.put("title", noticeTitle);
                                     postMap.put("user_id", current_user_id);
                                     postMap.put("timeStamp", FieldValue.serverTimestamp());
-                                    postMap.put("pdf file", downloadPdf);
+                                    postMap.put("pdf_file", downloadPdf);
 
 
                                     firebaseFirestore.collection("Posts").add(postMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
@@ -272,6 +273,7 @@ public class AddNoticeActivity extends AppCompatActivity {
 
                                 }
                             });
+                            newPostProgressBar.setVisibility(View.INVISIBLE);
 
 
                         } else {
@@ -300,7 +302,7 @@ public class AddNoticeActivity extends AppCompatActivity {
                         postMap.put("title", noticeTitle);
                         postMap.put("user_id", current_user_id);
                         postMap.put("timeStamp", FieldValue.serverTimestamp());
-                        postMap.put("pdf file", downloadPdf);
+                        postMap.put("pdf_file", downloadPdf);
 
 
                         firebaseFirestore.collection("Posts").add(postMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
@@ -332,6 +334,7 @@ public class AddNoticeActivity extends AppCompatActivity {
 
                     }
                 });
+                newPostProgressBar.setVisibility(View.INVISIBLE);
 
 
             } else if (pdf == null && imageMainUri != null) {
@@ -373,7 +376,7 @@ public class AddNoticeActivity extends AppCompatActivity {
                                     postMap.put("title", noticeTitle);
                                     postMap.put("user_id", current_user_id);
                                     postMap.put("timeStamp", FieldValue.serverTimestamp());
-                                    postMap.put("pdf file", null);
+                                    postMap.put("pdf_file", null);
 
 
                                     firebaseFirestore.collection("Posts").add(postMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
@@ -412,6 +415,7 @@ public class AddNoticeActivity extends AppCompatActivity {
                         }
                     }
                 });
+                newPostProgressBar.setVisibility(View.INVISIBLE);
 
             } else {
 
@@ -422,7 +426,7 @@ public class AddNoticeActivity extends AppCompatActivity {
                 postMap.put("title", noticeTitle);
                 postMap.put("user_id", current_user_id);
                 postMap.put("timeStamp", FieldValue.serverTimestamp());
-                postMap.put("pdf file", null);
+                postMap.put("pdf_file", null);
 
                 firebaseFirestore.collection("Posts").add(postMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                     @Override
@@ -442,6 +446,7 @@ public class AddNoticeActivity extends AppCompatActivity {
 
                     }
                 });
+                newPostProgressBar.setVisibility(View.INVISIBLE);
 
 
             }

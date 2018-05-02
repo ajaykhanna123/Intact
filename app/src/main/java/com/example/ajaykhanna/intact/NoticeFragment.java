@@ -6,9 +6,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.google.firebase.firestore.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -16,6 +22,11 @@ import android.view.ViewGroup;
  */
 public class NoticeFragment extends Fragment {
     private FloatingActionButton fabAddNotice;
+    private RecyclerView noticePostListView;
+    private List<NoticePost> noticeList;
+    private FirebaseFirestore firebaseFirestore;
+    private NoticeRecyclerAdapter noticeRecyclerAdapter;
+
 
 
     public NoticeFragment() {
@@ -31,6 +42,17 @@ public class NoticeFragment extends Fragment {
         View view= inflater.inflate(R.layout.fragment_notice,
                 container, false);
 
+        noticeList=new ArrayList<>();
+        // Inflate the layout for this fragment
+        noticePostListView=view.findViewById(R.id.noticePostListView);
+
+        noticeRecyclerAdapter=new NoticeRecyclerAdapter(noticeList);
+
+
+        noticePostListView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        noticePostListView.setAdapter(noticeRecyclerAdapter);
+
+
 
         fabAddNotice=(FloatingActionButton)view.findViewById(R.id.fabAddNotice);
 
@@ -45,6 +67,23 @@ public class NoticeFragment extends Fragment {
                 }
             });
         }
+
+        firebaseFirestore=FirebaseFirestore.getInstance();
+        firebaseFirestore.collection("Posts").addSnapshotListener(getActivity(),new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
+                for(DocumentChange doc: queryDocumentSnapshots.getDocumentChanges())
+                {
+                    if(doc.getType()==DocumentChange.Type.ADDED)
+                    {
+                        NoticePost blogPost=doc.getDocument().toObject(NoticePost.class);
+                        noticeList.add(blogPost);
+
+                        noticeRecyclerAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+        });
 
         return view;
     }
