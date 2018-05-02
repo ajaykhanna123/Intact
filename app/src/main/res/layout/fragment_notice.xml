@@ -9,6 +9,7 @@
    <RelativeLayout
        android:layout_width="match_parent"
        android:layout_height="match_parent"
+       android:layout_marginBottom="50dp"
    >
        <android.support.v7.widget.RecyclerView
                android:layout_width="match_parent"
@@ -28,7 +29,9 @@
            app:backgroundTint="@color/colorAccent"
            android:src="@mipmap/ic_add_black_24dp"
            app:fabCustomSize="50sp"
-           android:id="@+id/fabAddNotice"/>
+           android:id="@+id/fabAddNotice"
+
+       />
    </RelativeLayout>
 
 </FrameLayout>
