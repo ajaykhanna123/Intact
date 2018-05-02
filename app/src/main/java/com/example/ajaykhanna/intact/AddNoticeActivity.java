@@ -70,6 +70,8 @@ public class AddNoticeActivity extends AppCompatActivity {
     //the firebase objects for storage and database
     private StorageReference storageReference;
     private FirebaseFirestore firebaseFirestore;
+    Uri finalPdf1;
+
     private FirebaseAuth firebaseAuth;
     private String current_user_id;
     private Bitmap compressedImageFile;
@@ -96,26 +98,25 @@ public class AddNoticeActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Add Notice");
 
 
-
         //initialse all fields
 
-        edtNoticeTitle=findViewById(R.id.edtNoticeTitle);
-        edtNoticeDesc=findViewById(R.id.edtNoticeDesc);
-        newPostProgressBar=new ProgressBar(AddNoticeActivity.this);
+        edtNoticeTitle = findViewById(R.id.edtNoticeTitle);
+        edtNoticeDesc = findViewById(R.id.edtNoticeDesc);
+        newPostProgressBar = new ProgressBar(AddNoticeActivity.this);
 
         addimageLayout = findViewById(R.id.addImageLinearLayout);
         imgPost = new ImageView(AddNoticeActivity.this);
-        pdfView=new TextView(AddNoticeActivity.this);
+        pdfView = new TextView(AddNoticeActivity.this);
 
-        storageReference= FirebaseStorage.getInstance().getReference();
-        firebaseFirestore= FirebaseFirestore.getInstance();
-        firebaseAuth=FirebaseAuth.getInstance();
-        current_user_id=firebaseAuth.getCurrentUser().getUid();
+        storageReference = FirebaseStorage.getInstance().getReference();
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
+        current_user_id = firebaseAuth.getCurrentUser().getUid();
 
 
         bottomNavigationView = findViewById(R.id.bottomNavAddNotice);
         BottomNavigationViewHelper.disableShiftMode(bottomNavigationView);
-
+        //choose wich file is used while makig a notice
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -154,10 +155,9 @@ public class AddNoticeActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
-        int id=item.getItemId();
+        int id = item.getItemId();
 
-        switch (id)
-        {
+        switch (id) {
             case R.id.saveNotice:
                 saveAllDataToFirestore();
                 return true;
@@ -176,19 +176,18 @@ public class AddNoticeActivity extends AppCompatActivity {
             final String randomName = UUID.randomUUID().toString();
             StorageReference filePath = storageReference.child("post_images").child(randomName + ".jpg");
 
-            StorageReference pdfPath=storageReference.child("post_pdf").child(randomName+".pdf");
+            StorageReference pdfPath = storageReference.child("post_pdf").child(randomName + ".pdf");
 
 
-            if(imageMainUri!=null && pdf!=null) {
+            if (imageMainUri != null && pdf != null) {
 
                 pdfPath.putFile(pdf).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                         downloadPdf=task.getResult().getDownloadUrl().toString();
+                        downloadPdf = task.getResult().getDownloadUrl().toString();
 
-                        if(task.isSuccessful())
-                        {
-                            Toast.makeText(AddNoticeActivity.this,"pdf file upload",Toast.LENGTH_LONG)
+                        if (task.isSuccessful()) {
+                            Toast.makeText(AddNoticeActivity.this, "pdf file upload", Toast.LENGTH_LONG)
                                     .show();
 
                         }
@@ -202,10 +201,6 @@ public class AddNoticeActivity extends AppCompatActivity {
 
                             }
                         });
-
-
-
-
 
 
                 filePath.putFile(imageMainUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
@@ -245,10 +240,7 @@ public class AddNoticeActivity extends AppCompatActivity {
                                     postMap.put("title", noticeTitle);
                                     postMap.put("user_id", current_user_id);
                                     postMap.put("timeStamp", FieldValue.serverTimestamp());
-                                    postMap.put("pdf file",downloadPdf);
-
-
-
+                                    postMap.put("pdf file", downloadPdf);
 
 
                                     firebaseFirestore.collection("Posts").add(postMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
@@ -287,8 +279,141 @@ public class AddNoticeActivity extends AppCompatActivity {
                         }
                     }
                 });
-            }else
-            {
+            } else if (pdf != null && imageMainUri == null) {
+
+
+                UploadTask uploadTask = storageReference.child("post_pdf").child(randomName + ".jpg")
+                        .putFile(pdf);
+
+
+                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                        String downloadPdf = taskSnapshot.getDownloadUrl().toString();
+
+
+                        Map<String, Object> postMap = new HashMap<>();
+                        postMap.put("image_thumb", null);
+                        postMap.put("image_url", null);
+                        postMap.put("desc", noticeDesc);
+                        postMap.put("title", noticeTitle);
+                        postMap.put("user_id", current_user_id);
+                        postMap.put("timeStamp", FieldValue.serverTimestamp());
+                        postMap.put("pdf file", downloadPdf);
+
+
+                        firebaseFirestore.collection("Posts").add(postMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentReference> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(AddNoticeActivity.this, "This post was added", Toast.LENGTH_LONG)
+                                            .show();
+                                    Intent mainIntent = new Intent(AddNoticeActivity.this, MainActivity.class);
+                                    startActivity(mainIntent);
+                                    finish();
+
+                                } else {
+                                    Toast.makeText(AddNoticeActivity.this, "this post was not added"
+                                            , Toast.LENGTH_LONG).show();
+
+                                }
+
+                            }
+                        });
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                        String message = e.getMessage().toString();
+                        Toast.makeText(AddNoticeActivity.this, message, Toast.LENGTH_LONG).show();
+
+                    }
+                });
+
+
+            } else if (pdf == null && imageMainUri != null) {
+
+                filePath.putFile(imageMainUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task) {
+                        final String downloadUri = task.getResult().getDownloadUrl().toString();
+
+                        if (task.isSuccessful()) {
+                            File newImageFile = new File(imageMainUri.getPath());
+                            try {
+                                compressedImageFile = new Compressor(AddNoticeActivity.this)
+                                        .setMaxHeight(100)
+                                        .setMaxWidth(100)
+                                        .setQuality(2)
+                                        .compressToBitmap(newImageFile);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            compressedImageFile.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                            byte[] thumbData = baos.toByteArray();
+                            UploadTask uploadTask = storageReference.child("post_images/thumbs").child(randomName + ".jpg")
+                                    .putBytes(thumbData);
+
+
+                            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                                    String downloadThumbUri = taskSnapshot.getDownloadUrl().toString();
+
+
+                                    Map<String, Object> postMap = new HashMap<>();
+                                    postMap.put("image_thumb", downloadThumbUri);
+                                    postMap.put("image_url", downloadUri);
+                                    postMap.put("desc", noticeDesc);
+                                    postMap.put("title", noticeTitle);
+                                    postMap.put("user_id", current_user_id);
+                                    postMap.put("timeStamp", FieldValue.serverTimestamp());
+                                    postMap.put("pdf file", null);
+
+
+                                    firebaseFirestore.collection("Posts").add(postMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentReference> task) {
+                                            if (task.isSuccessful()) {
+                                                Toast.makeText(AddNoticeActivity.this, "This post was added", Toast.LENGTH_LONG)
+                                                        .show();
+                                                Intent mainIntent = new Intent(AddNoticeActivity.this, MainActivity.class);
+                                                startActivity(mainIntent);
+                                                finish();
+
+                                            } else {
+                                                Toast.makeText(AddNoticeActivity.this, "this post was not added"
+                                                        , Toast.LENGTH_LONG).show();
+
+                                            }
+
+                                        }
+                                    });
+
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+
+                                    String message = e.getMessage().toString();
+                                    Toast.makeText(AddNoticeActivity.this, message, Toast.LENGTH_LONG).show();
+
+                                }
+                            });
+
+
+                        } else {
+                            addimageLayout.removeView(newPostProgressBar);
+                        }
+                    }
+                });
+
+            } else {
 
                 Map<String, Object> postMap = new HashMap<>();
                 postMap.put("image_thumb", null);
@@ -297,6 +422,7 @@ public class AddNoticeActivity extends AppCompatActivity {
                 postMap.put("title", noticeTitle);
                 postMap.put("user_id", current_user_id);
                 postMap.put("timeStamp", FieldValue.serverTimestamp());
+                postMap.put("pdf file", null);
 
                 firebaseFirestore.collection("Posts").add(postMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                     @Override
@@ -318,12 +444,11 @@ public class AddNoticeActivity extends AppCompatActivity {
                 });
 
 
-    }
-
+            }
 
 
         } else {
-            Toast.makeText(AddNoticeActivity.this,"Title of the post is must",Toast.LENGTH_LONG).show();
+            Toast.makeText(AddNoticeActivity.this, "Title of the post is must", Toast.LENGTH_LONG).show();
         }
 
     }
@@ -375,7 +500,7 @@ public class AddNoticeActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         imgPost.setImageResource(0);
-                                        imageMainUri=null;
+                                        imageMainUri = null;
                                     }
                                 })
                                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -405,12 +530,12 @@ public class AddNoticeActivity extends AppCompatActivity {
 
 
                 addimageLayout.removeView(pdfView);
-                pdf =data.getData();
+                pdf = data.getData();
                 pdfView.setText(pdf.toString());
                 pdfView.setText("file.pdf");
                 addimageLayout.addView(pdfView);
 
-                final Uri finalPdf1 = pdf;
+                finalPdf1 = pdf;
                 pdfView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -419,8 +544,7 @@ public class AddNoticeActivity extends AppCompatActivity {
                         pdfOpenintent.setDataAndType(finalPdf1, "application/pdf");
                         try {
                             startActivity(pdfOpenintent);
-                        }
-                        catch (ActivityNotFoundException e) {
+                        } catch (ActivityNotFoundException e) {
 
                         }
 
@@ -436,7 +560,7 @@ public class AddNoticeActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         addimageLayout.removeView(pdfView);
-                                        pdf =null;
+                                        pdf = null;
                                     }
                                 })
                                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -454,8 +578,7 @@ public class AddNoticeActivity extends AppCompatActivity {
                 });
 
 
-
-            }else{
+            } else {
                 Toast.makeText(this, "No file chosen", Toast.LENGTH_SHORT).show();
             }
         }
