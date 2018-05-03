@@ -17,9 +17,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
-import android.widget.Toolbar;
+import android.widget.*;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -42,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle mToogle;
     private NavigationView navigationView;
+    private EditText edtNameAcc;
+    private TextView txtAccName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +54,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mToolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.menu_app_bar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Intact");
+
+        //disply name of the user in navigation drawer
+        txtAccName=findViewById(R.id.txtUsername);
+        edtNameAcc=findViewById(R.id.edtAccName);
+        String accName=edtNameAcc.getText().toString();
+        txtAccName.setText(accName);
 
         //drawer menu layout
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout);
