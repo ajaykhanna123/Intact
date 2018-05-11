@@ -15,6 +15,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import java.util.Date;
@@ -52,6 +53,8 @@ public class NoticeRecyclerAdapter  extends RecyclerView.Adapter<NoticeRecyclerA
         holder.setBlogImage(image_url);
 
         String user_id=noticePost.get(position).getUser_id();
+
+
         firebaseFirestore.collection("Users").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

@@ -69,7 +69,11 @@ public class NoticeFragment extends Fragment {
         }
 
         firebaseFirestore=FirebaseFirestore.getInstance();
-        firebaseFirestore.collection("Posts").addSnapshotListener(getActivity(),new EventListener<QuerySnapshot>() {
+
+        Query firstQuery=firebaseFirestore.collection("Posts").orderBy("timeStamp"
+                ,Query.Direction.DESCENDING);//post wich is posted after is added on front of fragment
+
+        firstQuery.addSnapshotListener(getActivity(),new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
                 for(DocumentChange doc: queryDocumentSnapshots.getDocumentChanges())
